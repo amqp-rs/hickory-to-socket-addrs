@@ -1,5 +1,4 @@
 <div align="center">
-<img src="logo.jpg" width="30%"></img>
 
 [![API Docs](https://docs.rs/hickory-to-socket-addrs/badge.svg)](https://docs.rs/hickory-to-socket-addrs)
 [![Build status](https://github.com/amqp-rs/hickory-to-socket-addrs/workflows/Build%20and%20test/badge.svg)](https://github.com/amqp-rs/hickory-to-socket-addrs/actions)
@@ -8,7 +7,7 @@
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
  <strong>
-   `std::net::ToSocketAddrs` on top of `hickory-dns`
+   hickory-to-socket-addrs: std::net::ToSocketAddrs on top of hickory-dns
  </strong>
 
 </div>
