@@ -1,0 +1,20 @@
+[package]
+name = "hickory-to-socket-addrs"
+version = "1.0.0"
+edition = "2024"
+authors = ["Marc-Antoine Perennou <Marc-Antoine@Perennou.com>"]
+description = "std::net::ToSocketAddrs backed by hickory-dns"
+repository = "https://github.com/amqp-rs/hickory-to-socket-addrs"
+readme = "README.md"
+documentation = "https://docs.rs/hickory-to-socket-addrs"
+keywords = ["dns"]
+categories = ["network-programming"]
+license = "MIT"
+rust-version = "1.85.0"
+
+[dependencies]
+hickory-resolver = "^0.25"
+tokio = "^1.47"
+
+[badges]
+maintenance = { status = "actively-developed" }
