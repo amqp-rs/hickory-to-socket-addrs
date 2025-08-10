@@ -12,9 +12,15 @@ categories = ["network-programming"]
 license = "MIT"
 rust-version = "1.85.0"
 
-[dependencies]
-hickory-resolver = "^0.25"
-tokio = "^1.47"
+[dependencies.hickory-resolver]
+version = "^0.25"
+default-features = false
+features = ["system-config", "tokio"]
+
+[dependencies.tokio]
+version = "^1.47"
+default-features = false
+features = ["rt"]
 
 [badges]
 maintenance = { status = "actively-developed" }
