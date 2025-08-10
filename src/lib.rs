@@ -25,10 +25,7 @@
 //! Ok::<(), std::io::Error>(())
 //! ```
 
-use hickory_resolver::{
-    IntoName, Resolver,
-    lookup_ip::{LookupIp, LookupIpIntoIter},
-};
+use hickory_resolver::{IntoName, Resolver, lookup_ip::LookupIpIntoIter};
 use std::{
     fmt,
     future::Future,
@@ -63,6 +60,14 @@ impl<T: IntoName + Clone> HickoryToSocketAddrs<T> {
     }
 }
 
+async fn lookup<H: IntoName>(host: H) -> io::Result<LookupIpIntoIter> {
+    Ok(Resolver::builder_tokio()?
+        .build()
+        .lookup_ip(host)
+        .await?
+        .into_iter())
+}
+
 impl FromStr for HickoryToSocketAddrs<String> {
     type Err = io::Error;
 
@@ -82,13 +87,7 @@ impl<T: IntoName + Clone> ToSocketAddrs for HickoryToSocketAddrs<T> {
 
     fn to_socket_addrs(&self) -> io::Result<Self::Iter> {
         Ok(HickorySocketAddrs(
-            block_on(async {
-                Ok(Resolver::builder_tokio()?
-                    .build()
-                    .lookup_ip(self.host.clone())
-                    .await?)
-            })?
-            .into_iter(),
+            block_on(lookup(self.host.clone()))?,
             self.port,
         ))
     }
@@ -111,7 +110,7 @@ impl fmt::Debug for HickorySocketAddrs {
     }
 }
 
-fn block_on(fut: impl Future<Output = io::Result<LookupIp>>) -> io::Result<LookupIp> {
+fn block_on<T>(fut: impl Future<Output = io::Result<T>>) -> io::Result<T> {
     if let Ok(handle) = tokio::runtime::Handle::try_current() {
         handle.block_on(fut)
     } else {
@@ -119,5 +118,23 @@ fn block_on(fut: impl Future<Output = io::Result<LookupIp>>) -> io::Result<Looku
             .enable_all()
             .build()?
             .block_on(fut)
+    }
+}
+
+#[cfg(feature = "reactor-trait")]
+mod async_impl {
+    use super::*;
+
+    use async_trait::async_trait;
+    use reactor_trait::AsyncToSocketAddrs;
+
+    #[async_trait]
+    impl<T: IntoName + Clone + Send + Sync> AsyncToSocketAddrs for HickoryToSocketAddrs<T> {
+        async fn to_socket_addrs(&self) -> io::Result<Box<dyn Iterator<Item = SocketAddr>>> {
+            Ok(Box::new(HickorySocketAddrs(
+                lookup(self.host.clone()).await?,
+                self.port,
+            )))
+        }
     }
 }
