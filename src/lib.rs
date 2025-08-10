@@ -115,6 +115,9 @@ fn block_on(fut: impl Future<Output = io::Result<LookupIp>>) -> io::Result<Looku
     if let Ok(handle) = tokio::runtime::Handle::try_current() {
         handle.block_on(fut)
     } else {
-        tokio::runtime::Builder::new_current_thread().enable_all().build()?.block_on(fut)
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()?
+            .block_on(fut)
     }
 }
