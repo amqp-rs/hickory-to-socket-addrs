@@ -21,8 +21,7 @@
 //!     .parse::<HickoryToSocketAddrs<_>>()?
 //!     .to_socket_addrs()?
 //!     .collect::<Vec<_>>();
-//!
-//! Ok::<(), std::io::Error>(())
+//! # Ok::<(), std::io::Error>(())
 //! ```
 
 use hickory_resolver::{IntoName, Resolver, lookup_ip::LookupIpIntoIter};
@@ -44,8 +43,7 @@ use std::{
 ///     .parse::<HickoryToSocketAddrs<_>>()?
 ///     .to_socket_addrs()?
 ///     .collect::<Vec<_>>();
-///
-/// Ok::<(), std::io::Error>(())
+/// # Ok::<(), std::io::Error>(())
 /// ```
 #[derive(Debug)]
 pub struct HickoryToSocketAddrs<T: IntoName + Clone> {

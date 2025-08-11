@@ -31,6 +31,4 @@ let socket_addrs = "www.rust-lang.org:443"
     .parse::<HickoryToSocketAddrs<_>>()?
     .to_socket_addrs()?
     .collect::<Vec<_>>();
-
-Ok::<(), std::io::Error>(())
 ```
