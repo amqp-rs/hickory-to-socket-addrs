@@ -128,7 +128,7 @@ mod async_impl {
 
     #[async_trait]
     impl<T: IntoName + Clone + Send + Sync> AsyncToSocketAddrs for HickoryToSocketAddrs<T> {
-        async fn to_socket_addrs(&self) -> io::Result<Box<dyn Iterator<Item = SocketAddr>>> {
+        async fn to_socket_addrs(&self) -> io::Result<Box<dyn Iterator<Item = SocketAddr> + Send + Sync>> {
             Ok(Box::new(HickorySocketAddrs(
                 lookup(self.host.clone()).await?,
                 self.port,
