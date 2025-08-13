@@ -1,6 +1,6 @@
 [package]
 name = "hickory-to-socket-addrs"
-version = "1.3.0"
+version = "2.0.0"
 edition = "2024"
 authors = ["Marc-Antoine Perennou <Marc-Antoine@Perennou.com>"]
 description = "std::net::ToSocketAddrs backed by hickory-dns"
@@ -14,7 +14,7 @@ rust-version = "1.85.0"
 
 [features]
 default = []
-reactor-trait = ["dep:async-trait", "dep:reactor-trait"]
+futures = ["dep:async-trait", "dep:reactor-trait"]
 
 [dependencies.async-trait]
 version = "^0.1.42"
@@ -27,7 +27,7 @@ default-features = false
 features = ["system-config", "tokio"]
 
 [dependencies.reactor-trait]
-version = "^2.7"
+version = "^3.0"
 default-features = false
 optional = true
 

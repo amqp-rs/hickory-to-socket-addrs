@@ -119,7 +119,7 @@ fn block_on<T>(fut: impl Future<Output = io::Result<T>>) -> io::Result<T> {
     }
 }
 
-#[cfg(feature = "reactor-trait")]
+#[cfg(feature = "futures")]
 mod async_impl {
     use super::*;
 
