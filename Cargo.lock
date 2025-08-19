@@ -296,7 +296,7 @@ dependencies = [
 
 [[package]]
 name = "hickory-to-socket-addrs"
-version = "2.0.0"
+version = "3.0.0"
 dependencies = [
  "hickory-resolver",
  "tokio",
