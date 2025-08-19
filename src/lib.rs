@@ -51,23 +51,23 @@ pub struct HickoryToSocketAddrs<T: IntoName + Clone> {
     port: u16,
 }
 
-impl<T: IntoName + Clone> HickoryToSocketAddrs<T> {
+impl<H: IntoName + Clone> HickoryToSocketAddrs<H> {
     /// Create a `HickoryToSocketAddrs` from split host and port components.
-    pub fn new(host: T, port: u16) -> Self {
+    pub fn new(host: H, port: u16) -> Self {
         Self { host, port }
     }
-}
 
-/// Perform DNS resolution and return iterator of SocketAddr using hickory-dns
-pub async fn hickory_lookup<H: IntoName>(host: H, port: u16) -> io::Result<HickorySocketAddrs> {
-    Ok(HickorySocketAddrs(
-        Resolver::builder_tokio()?
-            .build()
-            .lookup_ip(host)
-            .await?
-            .into_iter(),
-        port,
-    ))
+    /// Perform DNS resolution and return iterator of SocketAddr using hickory-dns
+    pub async fn lookup(&self) -> io::Result<HickorySocketAddrs> {
+        Ok(HickorySocketAddrs(
+            Resolver::builder_tokio()?
+                .build()
+                .lookup_ip(self.host.clone())
+                .await?
+                .into_iter(),
+            self.port,
+        ))
+    }
 }
 
 impl FromStr for HickoryToSocketAddrs<String> {
@@ -88,7 +88,7 @@ impl<T: IntoName + Clone> ToSocketAddrs for HickoryToSocketAddrs<T> {
     type Iter = HickorySocketAddrs;
 
     fn to_socket_addrs(&self) -> io::Result<Self::Iter> {
-        block_on(hickory_lookup(self.host.clone(), self.port))
+        block_on(self.lookup())
     }
 }
 
