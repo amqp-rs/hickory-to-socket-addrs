@@ -24,7 +24,7 @@
 //! # Ok::<(), std::io::Error>(())
 //! ```
 
-use hickory_resolver::{IntoName, Resolver, lookup_ip::LookupIpIntoIter};
+use hickory_resolver::{Resolver, lookup_ip::LookupIpIntoIter};
 use std::{
     fmt,
     future::Future,
@@ -32,6 +32,8 @@ use std::{
     net::{SocketAddr, ToSocketAddrs},
     str::FromStr,
 };
+
+pub use hickory_resolver::IntoName;
 
 /// Wrapper around host and port to resolve to `SocketAddr` through `hickory-dns`
 ///
