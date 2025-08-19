@@ -58,12 +58,16 @@ impl<T: IntoName + Clone> HickoryToSocketAddrs<T> {
     }
 }
 
-async fn lookup<H: IntoName>(host: H) -> io::Result<LookupIpIntoIter> {
-    Ok(Resolver::builder_tokio()?
-        .build()
-        .lookup_ip(host)
-        .await?
-        .into_iter())
+/// Perform DNS resolution and return iterator of SocketAddr using hickory-dns
+pub async fn hickory_lookup<H: IntoName>(host: H, port: u16) -> io::Result<HickorySocketAddrs> {
+    Ok(HickorySocketAddrs(
+        Resolver::builder_tokio()?
+            .build()
+            .lookup_ip(host)
+            .await?
+            .into_iter(),
+        port,
+    ))
 }
 
 impl FromStr for HickoryToSocketAddrs<String> {
@@ -84,10 +88,7 @@ impl<T: IntoName + Clone> ToSocketAddrs for HickoryToSocketAddrs<T> {
     type Iter = HickorySocketAddrs;
 
     fn to_socket_addrs(&self) -> io::Result<Self::Iter> {
-        Ok(HickorySocketAddrs(
-            block_on(lookup(self.host.clone()))?,
-            self.port,
-        ))
+        block_on(hickory_lookup(self.host.clone(), self.port))
     }
 }
 
@@ -116,25 +117,5 @@ fn block_on<T>(fut: impl Future<Output = io::Result<T>>) -> io::Result<T> {
             .enable_all()
             .build()?
             .block_on(fut)
-    }
-}
-
-#[cfg(feature = "futures")]
-mod async_impl {
-    use super::*;
-
-    use async_trait::async_trait;
-    use reactor_trait::AsyncToSocketAddrs;
-
-    #[async_trait]
-    impl<T: IntoName + Clone + Send + Sync> AsyncToSocketAddrs for HickoryToSocketAddrs<T> {
-        async fn to_socket_addrs(
-            &self,
-        ) -> io::Result<Box<dyn Iterator<Item = SocketAddr> + Send + Sync>> {
-            Ok(Box::new(HickorySocketAddrs(
-                lookup(self.host.clone()).await?,
-                self.port,
-            )))
-        }
     }
 }

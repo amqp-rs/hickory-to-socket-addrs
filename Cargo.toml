@@ -14,22 +14,11 @@ rust-version = "1.85.0"
 
 [features]
 default = []
-futures = ["dep:async-trait", "dep:reactor-trait"]
-
-[dependencies.async-trait]
-version = "^0.1.42"
-default-features = false
-optional = true
 
 [dependencies.hickory-resolver]
 version = "^0.25"
 default-features = false
 features = ["system-config", "tokio"]
-
-[dependencies.reactor-trait]
-version = "^3.0"
-default-features = false
-optional = true
 
 [dependencies.tokio]
 version = "^1.47"
